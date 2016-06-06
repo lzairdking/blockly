@@ -254,6 +254,7 @@ Blockly.Events.getDescendantIds_ = function(block) {
  * Decode the JSON into an event.
  * @param {!Object} json JSON representation.
  * @param {!Blockly.Workspace} workspace Target workspace for event.
+ * @return {!Blockly.Events.Abstract} The event represented by the JSON.
  */
 Blockly.Events.fromJson = function(json, workspace) {
   var event;
@@ -274,7 +275,7 @@ Blockly.Events.fromJson = function(json, workspace) {
       event = new Blockly.Events.Ui(null);
       break;
     default:
-      throw 'Unknown event type.'
+      throw 'Unknown event type.';
   }
   event.fromJson(json);
   event.workspaceId = workspace.id;
@@ -392,7 +393,7 @@ Blockly.Events.Create.prototype.run = function(forward) {
     for (var i = 0, id; id = this.ids[i]; i++) {
       var block = workspace.getBlockById(id);
       if (block) {
-        block.dispose(false, true);
+        block.dispose(false, false);
       } else if (id == this.blockId) {
         // Only complain about root-level block.
         console.warn("Can't uncreate non-existant block: " + id);
@@ -455,7 +456,7 @@ Blockly.Events.Delete.prototype.run = function(forward) {
     for (var i = 0, id; id = this.ids[i]; i++) {
       var block = workspace.getBlockById(id);
       if (block) {
-        block.dispose(false, true);
+        block.dispose(false, false);
       } else if (id == this.blockId) {
         // Only complain about root-level block.
         console.warn("Can't delete non-existant block: " + id);

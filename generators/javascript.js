@@ -104,6 +104,12 @@ Blockly.JavaScript.ORDER_COMMA = 17;         // ,
 Blockly.JavaScript.ORDER_NONE = 99;          // (...)
 
 /**
+ * Allow for switching between one and zero based indexing, one based by
+ * default.
+ */
+Blockly.JavaScript.ONE_BASED_INDEXING = true;
+
+/**
  * Initialise the database of variable names.
  * @param {!Blockly.Workspace} workspace Workspace to generate code from.
  */
@@ -192,8 +198,16 @@ Blockly.JavaScript.scrub_ = function(block, code) {
   if (!block.outputConnection || !block.outputConnection.targetConnection) {
     // Collect comment for this block.
     var comment = block.getCommentText();
+    comment = Blockly.utils.wrap(comment, this.COMMENT_WRAP - 3);
     if (comment) {
-      commentCode += Blockly.JavaScript.prefixLines(comment, '// ') + '\n';
+      if (block.getProcedureDef) {
+        // Use a comment block for function comments.
+        commentCode += '/**\n' +
+                       Blockly.JavaScript.prefixLines(comment + '\n', ' * ') +
+                       ' */\n';
+      } else {
+        commentCode += Blockly.JavaScript.prefixLines(comment + '\n', '// ');
+      }
     }
     // Collect comments for all value arguments.
     // Don't collect comments for nested statements.
